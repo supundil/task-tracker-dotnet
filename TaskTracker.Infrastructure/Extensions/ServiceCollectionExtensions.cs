@@ -21,6 +21,8 @@ namespace TaskTracker.Infrastructure.Extensions
 
             services.AddScoped<IUserRepository, UserRepository>();
 
+            services.AddScoped<ITaskRepository, TaskRepository>();
+
             services.AddScoped<IJwtService, JwtService>();
 
             services.AddScoped<PasswordHasherService>();

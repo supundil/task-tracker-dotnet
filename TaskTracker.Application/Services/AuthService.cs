@@ -29,7 +29,7 @@ namespace TaskTracker.Application.Services
         public async Task RegisterAsync(RegisterRequest request)
         {
             if (await _userRepository.ExistsAsync(request.Email))
-                throw new Exception("Email already exists.");
+                throw new ArgumentException("Email already exists.");
 
             var user = new User
             {
@@ -55,10 +55,10 @@ namespace TaskTracker.Application.Services
                 await _userRepository.GetByEmailAsync(request.Email);
 
             if (user == null)
-                throw new Exception("Invalid credentials.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
 
             if (!_passwordHasher.VerifyPassword(user, request.Password))
-                throw new Exception("Invalid credentials.");
+                throw new UnauthorizedAccessException("Invalid credentials.");
 
             var token = _jwtService.GenerateToken(user);
 
