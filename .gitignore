@@ -488,3 +488,9 @@ obj/
 .vs/
 *.user
 *.suo
+
+
+# Ignore local configuration files
+TaskTracker.API/appsettings.json
+TaskTracker.API/appsettings.Development.json
+TaskTracker.API/appsettings.json/appsettings.Development.json
