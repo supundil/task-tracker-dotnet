@@ -3,6 +3,7 @@ import { storage } from "../utils/storage";
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  token: string | null;
   login: (token: string) => void;
   logout: () => void;
 }
@@ -14,26 +15,33 @@ export function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const [token, setToken] = useState<string | null>(
+  storage.getToken()
+);
+const [isAuthenticated, setIsAuthenticated] =
+  useState(storage.isAuthenticated());
 
   useEffect(() => {
     setIsAuthenticated(storage.isAuthenticated());
   }, []);
 
-  const login = (token: string) => {
-    storage.setToken(token);
-    setIsAuthenticated(true);
+  const login = (jwt: string) => {
+  storage.setToken(jwt);
+  setToken(jwt);
+  setIsAuthenticated(true);
   };
 
   const logout = () => {
-    storage.removeToken();
-    setIsAuthenticated(false);
+  storage.removeToken();
+  setToken(null);
+  setIsAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        token,
         login,
         logout,
       }}
