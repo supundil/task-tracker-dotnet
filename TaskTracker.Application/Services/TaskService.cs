@@ -30,8 +30,9 @@ namespace TaskTracker.Application.Services
 
                 Status = request.Status,
 
-                DueDate = request.DueDate,
-
+                DueDate = request.DueDate.HasValue
+                ? DateTime.SpecifyKind(request.DueDate.Value, DateTimeKind.Utc)
+                : null,
                 OwnerId = currentUserId,
 
                 CreatedAt = DateTime.UtcNow,
@@ -141,7 +142,9 @@ namespace TaskTracker.Application.Services
             task.Title = request.Title;
             task.Description = request.Description;
             task.Status = request.Status;
-            task.DueDate = request.DueDate;
+            task.DueDate = request.DueDate.HasValue
+                ? DateTime.SpecifyKind(request.DueDate.Value, DateTimeKind.Utc)
+                : null;
             task.UpdatedAt = DateTime.UtcNow;
 
             _taskRepository.Update(task);
