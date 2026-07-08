@@ -87,14 +87,29 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowLocalhost5173", policy =>
+//     {
+//         policy.WithOrigins("http://localhost:5173")
+//               .AllowAnyHeader()
+//               .AllowAnyMethod()
+//               .AllowCredentials();
+//     });
+// });
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost5173", policy =>
+    options.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy
+            .WithOrigins(
+                "http://localhost:5173",
+                "https://6a4ebc033b967c0008a785f8--tasktrackerdotnetreact.netlify.app"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -147,7 +162,8 @@ app.UseGlobalExceptionMiddleware();
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowLocalhost5173");
+//app.UseCors("AllowLocalhost5173");
+app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
