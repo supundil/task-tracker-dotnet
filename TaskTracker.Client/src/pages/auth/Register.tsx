@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import { authService } from "../../services/authService";
+import { toast } from "react-toastify";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -16,18 +17,14 @@ export default function Register() {
 
   const [loading, setLoading] = useState(false);
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
   }
 
-  async function handleSubmit(
-    e: React.FormEvent
-  ) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     try {
@@ -35,11 +32,14 @@ export default function Register() {
 
       await authService.register(form);
 
-      alert("Registration successful!");
+      //alert("Registration successful!");
+      toast.success("Registration successful!");
 
       navigate("/");
-    } catch {
-      alert("Registration failed.");
+    } catch (error) {
+      console.error(error);
+      //alert("Registration failed.");
+      toast.error("Registration failed.");
     } finally {
       setLoading(false);
     }
@@ -48,14 +48,9 @@ export default function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
-        <h1 className="mb-6 text-center text-3xl font-bold">
-          Create Account
-        </h1>
+        <h1 className="mb-6 text-center text-3xl font-bold">Create Account</h1>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             label="Name"
             name="name"
@@ -79,21 +74,14 @@ export default function Register() {
             onChange={handleChange}
           />
 
-          <Button
-            type="submit"
-            disabled={loading}
-          >
+          <Button type="submit" disabled={loading}>
             {loading ? "Creating..." : "Register"}
           </Button>
         </form>
 
         <p className="mt-5 text-center text-sm">
           Already have an account?
-
-          <Link
-            className="ml-1 text-blue-600"
-            to="/"
-          >
+          <Link className="ml-1 text-blue-600" to="/">
             Login
           </Link>
         </p>

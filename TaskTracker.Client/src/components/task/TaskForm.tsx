@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import type {
-  CreateTaskRequest,
-} from "../../types/task";
-import {
-  TaskStatus,
-  type TaskResponse,
-} from "../../types/task";
+import type { CreateTaskRequest } from "../../types/task";
+import { TaskStatus, type TaskResponse } from "../../types/task";
 import Button from "../common/Button";
 import Input from "../common/Input";
+import { toast } from "react-toastify";
 
-interface Props {   
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (task: CreateTaskRequest) => Promise<void>;
@@ -52,26 +48,22 @@ export default function TaskForm({
   function handleChange(
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) {
     const { name, value } = e.target;
 
     setForm((prev) => ({
       ...prev,
-      [name]:
-        name === "status"
-          ? Number(value)
-          : value,
+      [name]: name === "status" ? Number(value) : value,
     }));
   }
 
-  async function handleSubmit(
-    e: React.FormEvent
-  ) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!form.title.trim()) {
-      alert("Title is required.");
+      //alert("Title is required.");
+      toast.error("Title is required.");
       return;
     }
 
@@ -81,6 +73,8 @@ export default function TaskForm({
       await onSubmit(form);
 
       onClose();
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -95,10 +89,7 @@ export default function TaskForm({
           {editingTask ? "Edit Task" : "Create Task"}
         </h2>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             label="Title"
             name="title"
@@ -121,9 +112,7 @@ export default function TaskForm({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Status
-            </label>
+            <label className="mb-2 block text-sm font-medium">Status</label>
 
             <select
               name="status"
@@ -131,17 +120,11 @@ export default function TaskForm({
               onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 p-3"
             >
-              <option value={TaskStatus.Pending}>
-                Pending
-              </option>
+              <option value={TaskStatus.Pending}>Pending</option>
 
-              <option value={TaskStatus.InProgress}>
-                In Progress
-              </option>
+              <option value={TaskStatus.InProgress}>In Progress</option>
 
-              <option value={TaskStatus.Completed}>
-                Completed
-              </option>
+              <option value={TaskStatus.Completed}>Completed</option>
             </select>
           </div>
 
@@ -162,15 +145,12 @@ export default function TaskForm({
               Cancel
             </button>
 
-            <Button
-              type="submit"
-              disabled={loading}
-            >
+            <Button type="submit" disabled={loading}>
               {loading
                 ? "Saving..."
                 : editingTask
-                ? "Update Task"
-                : "Create Task"}
+                  ? "Update Task"
+                  : "Create Task"}
             </Button>
           </div>
         </form>

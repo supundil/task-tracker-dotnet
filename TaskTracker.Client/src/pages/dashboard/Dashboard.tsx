@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import Navbar from "../../components/layout/Navbar";
 import TaskList from "../../components/task/TaskList";
 import TaskForm from "../../components/task/TaskForm";
+import { toast } from "react-toastify";
 
 import { taskService } from "../../services/taskService";
 
-import type{
-  CreateTaskRequest,
-  TaskResponse,
-  UpdateTaskRequest,
+import {
+  TaskStatus,
+  type CreateTaskRequest,
+  type TaskResponse,
+  type UpdateTaskRequest,
 } from "../../types/task";
 
 export default function Dashboard() {
@@ -19,20 +21,34 @@ export default function Dashboard() {
 
   const [showForm, setShowForm] = useState(false);
 
-  const [editingTask, setEditingTask] =
-    useState<TaskResponse | null>(null);
+  const [search, setSearch] = useState("");
+
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const PAGE_SIZE = 10;
+  const [selectedStatus, setSelectedStatus] = useState<number | undefined>();
+
+  const [editingTask, setEditingTask] = useState<TaskResponse | null>(null);
 
   async function loadTasks() {
     try {
       setLoading(true);
 
-      const data = await taskService.getTasks();
+      //const data = await taskService.getTasks();
+
+      const data = await taskService.getTasks(
+        pageNumber,
+        PAGE_SIZE,
+        search,
+        selectedStatus,
+      );
 
       setTasks(data);
     } catch (error) {
       console.error(error);
 
-      alert("Failed to load tasks.");
+      //alert("Failed to load tasks.");
+      toast.error("Failed to load tasks.");
     } finally {
       setLoading(false);
     }
@@ -40,41 +56,76 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadTasks();
-  }, []);
+  }, [pageNumber, search, selectedStatus]);
 
-  async function handleCreate(
-    request: CreateTaskRequest
-  ) {
-    await taskService.createTask(request);
+  useEffect(() => {
+    setPageNumber(1);
+  }, [search]);
 
-    await loadTasks();
+  useEffect(() => {
+    setPageNumber(1);
+  }, [selectedStatus]);
+
+  async function handleCreate(request: CreateTaskRequest) {
+    try {
+      setLoading(true);
+
+      await taskService.createTask(request);
+
+      toast.success("Task created successfully.");
+      setShowForm(false);
+      await loadTasks();
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to create task.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  async function handleUpdate(
-    request: UpdateTaskRequest
-  ) {
+  async function handleUpdate(request: UpdateTaskRequest) {
     if (!editingTask) return;
 
-    await taskService.updateTask(
-      editingTask.id,
-      request
-    );
+    try {
+      setLoading(true);
 
-    setEditingTask(null);
+      await taskService.updateTask(editingTask.id, request);
 
-    await loadTasks();
+      toast.success("Task updated successfully.");
+
+      setEditingTask(null);
+      setShowForm(false);
+      await loadTasks();
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to update task.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleDelete(id: string) {
-    const confirmed = window.confirm(
-      "Delete this task?"
-    );
+    const confirmed = window.confirm("Delete this task?");
 
     if (!confirmed) return;
 
-    await taskService.deleteTask(id);
+    try {
+      setLoading(true);
 
-    await loadTasks();
+      await taskService.deleteTask(id);
+
+      toast.success("Task deleted successfully.");
+
+      await loadTasks();
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to delete task.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleEdit(task: TaskResponse) {
@@ -95,9 +146,7 @@ export default function Dashboard() {
 
       <main className="mx-auto max-w-6xl p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">
-            My Tasks
-          </h1>
+          <h1 className="text-3xl font-bold">My Tasks</h1>
 
           <button
             onClick={handleCreateClick}
@@ -106,18 +155,63 @@ export default function Dashboard() {
             + New Task
           </button>
         </div>
+        <div className="mb-6 flex flex-col gap-4 md:flex-row">
+          <input
+            type="text"
+            placeholder="Search tasks..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 rounded-lg border border-gray-300 p-3"
+          />
+
+          <select
+            value={selectedStatus ?? ""}
+            onChange={(e) =>
+              setSelectedStatus(
+                e.target.value ? Number(e.target.value) : undefined,
+              )
+            }
+            className="rounded-lg border border-gray-300 p-3"
+          >
+            <option value="">All Statuses</option>
+
+            <option value={TaskStatus.Pending}>Pending</option>
+
+            <option value={TaskStatus.InProgress}>In Progress</option>
+
+            <option value={TaskStatus.Completed}>Completed</option>
+          </select>
+        </div>
 
         {loading ? (
-          <div className="rounded-xl bg-white p-10 text-center shadow">
-            Loading...
+          <div className="rounded-xl bg-white p-12 text-center shadow">
+            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+
+            <p className="mt-4 text-gray-500">Loading tasks...</p>
           </div>
         ) : (
-          <TaskList
-            tasks={tasks}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <TaskList tasks={tasks} onEdit={handleEdit} onDelete={handleDelete} />
         )}
+        <div className="mt-6 flex justify-center gap-3">
+          <button
+            disabled={pageNumber === 1}
+            onClick={() => setPageNumber((p) => p - 1)}
+            className="rounded-lg border px-4 py-2 disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          <span className="flex items-center font-medium">
+            Page {pageNumber}
+          </span>
+
+          <button
+            onClick={() => setPageNumber((p) => p + 1)}
+            className="rounded-lg border px-4 py-2"
+          >
+            Next
+          </button>
+        </div>
 
         <TaskForm
           isOpen={showForm}
@@ -127,11 +221,7 @@ export default function Dashboard() {
             setEditingTask(null);
           }}
           editingTask={editingTask}
-          onSubmit={
-            editingTask
-              ? handleUpdate
-              : handleCreate
-          }
+          onSubmit={editingTask ? handleUpdate : handleCreate}
         />
       </main>
     </>
