@@ -1,5 +1,5 @@
 import { type TaskResponse, TaskStatus } from "../../types/task";
-import { TaskStatus as Status } from "../../types/task";
+//import { TaskStatus as Status } from "../../types/task";
 interface Props {
   task: TaskResponse;
   onView: (task: TaskResponse) => void;
@@ -7,21 +7,21 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
-function getStatusText(status: TaskStatus) {
-  switch (status) {
-    case Status.Pending:
-      return "Pending";
+// function getStatusText(status: TaskStatus) {
+//   switch (status) {
+//     case Status.Pending:
+//       return "Pending";
 
-    case Status.InProgress:
-      return "In Progress";
+//     case Status.InProgress:
+//       return "In Progress";
 
-    case Status.Completed:
-      return "Completed";
+//     case Status.Completed:
+//       return "Completed";
 
-    default:
-      return "Unknown";
-  }
-}
+//     default:
+//       return "Unknown";
+//   }
+// }
 
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-GB", {
