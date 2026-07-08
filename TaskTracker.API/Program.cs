@@ -105,7 +105,7 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:5173",
-                "https://6a4ebc033b967c0008a785f8--tasktrackerdotnetreact.netlify.app"
+                "https://tasktrackerdotnetreact.netlify.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
