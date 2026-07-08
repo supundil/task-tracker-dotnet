@@ -2,6 +2,7 @@ import { type TaskResponse, TaskStatus } from "../../types/task";
 import { TaskStatus as Status } from "../../types/task";
 interface Props {
   task: TaskResponse;
+  onView: (task: TaskResponse) => void;
   onEdit: (task: TaskResponse) => void;
   onDelete: (id: string) => void;
 }
@@ -62,9 +63,12 @@ function getStatusBadge(status: TaskStatus) {
   }
 }
 
-export default function TaskCard({ task, onEdit, onDelete }: Props) {
+export default function TaskCard({ task, onView, onEdit, onDelete }: Props) {
   return (
-    <div className="rounded-xl border bg-white p-5 shadow-sm">
+    <div
+      onClick={() => onView(task)}
+      className="cursor-pointer rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md"
+    >
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-lg font-bold">{task.title}</h3>
@@ -84,14 +88,20 @@ export default function TaskCard({ task, onEdit, onDelete }: Props) {
 
       <div className="mt-4 flex justify-end gap-3">
         <button
-          onClick={() => onEdit(task)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(task);
+          }}
           className="rounded bg-yellow-500 px-4 py-2 text-white"
         >
           Edit
         </button>
 
         <button
-          onClick={() => onDelete(task.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(task.id);
+          }}
           className="rounded bg-red-500 px-4 py-2 text-white"
         >
           Delete

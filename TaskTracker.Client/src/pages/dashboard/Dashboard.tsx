@@ -4,6 +4,8 @@ import Navbar from "../../components/layout/Navbar";
 import TaskList from "../../components/task/TaskList";
 import TaskForm from "../../components/task/TaskForm";
 import { toast } from "react-toastify";
+import useSignalR from "../../hooks/useSignalR";
+import TaskDetails from "../../components/task/TaskDetails";
 
 import { taskService } from "../../services/taskService";
 
@@ -30,6 +32,10 @@ export default function Dashboard() {
 
   const [editingTask, setEditingTask] = useState<TaskResponse | null>(null);
 
+  const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
+
+  const [showDetails, setShowDetails] = useState(false);
+
   async function loadTasks() {
     try {
       setLoading(true);
@@ -53,6 +59,8 @@ export default function Dashboard() {
       setLoading(false);
     }
   }
+
+  useSignalR(loadTasks);
 
   useEffect(() => {
     loadTasks();
@@ -134,6 +142,11 @@ export default function Dashboard() {
     setShowForm(true);
   }
 
+  function handleView(task: TaskResponse) {
+    setSelectedTask(task);
+    setShowDetails(true);
+  }
+
   function handleCreateClick() {
     setEditingTask(null);
 
@@ -190,7 +203,12 @@ export default function Dashboard() {
             <p className="mt-4 text-gray-500">Loading tasks...</p>
           </div>
         ) : (
-          <TaskList tasks={tasks} onEdit={handleEdit} onDelete={handleDelete} />
+          <TaskList
+            tasks={tasks}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         )}
         <div className="mt-6 flex justify-center gap-3">
           <button
@@ -222,6 +240,14 @@ export default function Dashboard() {
           }}
           editingTask={editingTask}
           onSubmit={editingTask ? handleUpdate : handleCreate}
+        />
+        <TaskDetails
+          task={selectedTask}
+          isOpen={showDetails}
+          onClose={() => {
+            setShowDetails(false);
+            setSelectedTask(null);
+          }}
         />
       </main>
     </>

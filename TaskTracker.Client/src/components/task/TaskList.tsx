@@ -1,27 +1,20 @@
 import TaskCard from "./TaskCard";
-import type{ TaskResponse } from "../../types/task";
+import type { TaskResponse } from "../../types/task";
 
 interface Props {
   tasks: TaskResponse[];
+  onView: (task: TaskResponse) => void;
   onEdit: (task: TaskResponse) => void;
   onDelete: (id: string) => void;
 }
 
-export default function TaskList({
-  tasks,
-  onEdit,
-  onDelete,
-}: Props) {
+export default function TaskList({ tasks, onView, onEdit, onDelete }: Props) {
   if (tasks.length === 0) {
     return (
       <div className="rounded-xl bg-white p-10 text-center shadow">
-        <h2 className="text-xl font-semibold">
-          No Tasks Found
-        </h2>
+        <h2 className="text-xl font-semibold">No Tasks Found</h2>
 
-        <p className="mt-2 text-gray-500">
-          Create your first task.
-        </p>
+        <p className="mt-2 text-gray-500">Create your first task.</p>
       </div>
     );
   }
@@ -32,6 +25,7 @@ export default function TaskList({
         <TaskCard
           key={task.id}
           task={task}
+          onView={onView}
           onEdit={onEdit}
           onDelete={onDelete}
         />

@@ -87,6 +87,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost5173", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -135,6 +146,8 @@ if (app.Environment.IsDevelopment())
 app.UseGlobalExceptionMiddleware();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowLocalhost5173");
 
 app.UseAuthentication();
 app.UseAuthorization();
