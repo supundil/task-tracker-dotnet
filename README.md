@@ -8,6 +8,8 @@ This project was developed as part of a Software Engineer (Backend Focused) take
 
 # Features
 
+## Backend
+
 - JWT Authentication
 - User Registration & Login
 - Role-Based Access Control (User/Admin)
@@ -22,9 +24,24 @@ This project was developed as part of a Software Engineer (Backend Focused) take
 - Global Exception Middleware
 - Unit Tests
 
+## Frontend
+
+- Login / Register
+- Protected Routes
+- Dashboard
+- Task Details
+- Create / Update / Delete Tasks
+- Search
+- Status Filtering
+- Pagination
+- Responsive UI
+- Real-Time Updates using SignalR
+
 ---
 
 # Tech Stack
+
+## Backend
 
 - .NET 8
 - ASP.NET Core Web API
@@ -37,6 +54,17 @@ This project was developed as part of a Software Engineer (Backend Focused) take
 - Moq
 - Swagger
 
+## Frontend
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Axios
+- React Router
+- React Toastify
+- Microsoft SignalR Client
+
 ---
 
 # Architecture
@@ -46,15 +74,18 @@ TaskTracker.API
 TaskTracker.Application
 TaskTracker.Infrastructure
 TaskTracker.Tests
+TaskTracker.Client
 ```
 
-Built using Clean Architecture.
+Built using Clean Architecture for the backend and React + TypeScript for the frontend.
 
 ---
 
 # Getting Started
 
 ## Clone
+
+# Backend Setup
 
 ```bash
 git clone <repository-url>
@@ -108,6 +139,54 @@ https://localhost:xxxx/swagger
 ```
 
 Replace **xxxx** with your local port.
+
+---
+
+# Frontend Setup
+
+Navigate to the frontend project.
+
+```bash
+cd TaskTracker.Client
+```
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Start the development server.
+
+```bash
+npm run dev
+```
+
+The frontend will be available at:
+
+```
+http://localhost:5173
+```
+
+Ensure the backend API is running before starting the frontend.
+
+---
+
+# Frontend Environment
+
+Update the API base URL inside:
+
+```
+TaskTracker.Client/src/api/axios.ts
+```
+
+Example:
+
+```ts
+baseURL: "http://localhost:5104/api";
+```
+
+If deploying the backend, update this URL to the deployed API endpoint.
 
 ---
 
@@ -217,8 +296,28 @@ on every Push and Pull Request.
 - Email Notifications
 - Soft Delete
 - Task Attachments
+- Dark Mode
+- Advanced Dashboard Analytics
 
 ---
+
+# Screenshots
+
+Login
+
+<img src="docs/login.png" width="900"/>
+
+register
+
+<img src="docs/register.png" width="900"/>
+
+Dashboard
+
+<img src="docs/dashboard.png" width="900"/>
+
+Task Details
+
+<img src="docs/task-details.png" width="900"/>
 
 # License
 
