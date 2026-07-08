@@ -77,8 +77,14 @@ namespace TaskTracker.Infrastructure.Authentication
         key,
         SecurityAlgorithms.HmacSha256);
 
-    var expiryMinutes =
-        int.Parse(_configuration["Jwt:ExpiryMinutes"]!);
+    // var expiryMinutes =
+    //     int.Parse(_configuration["Jwt:ExpiryMinutes"]!);
+
+    var expiryMinutes = int.TryParse(
+    _configuration["Jwt:ExpiryMinutes"],
+    out var minutes)
+        ? minutes
+        : 60;
 
     var token = new JwtSecurityToken(
         issuer: _configuration["Jwt:Issuer"],
