@@ -40,8 +40,6 @@ export default function Dashboard() {
     try {
       setLoading(true);
 
-      //const data = await taskService.getTasks();
-
       const data = await taskService.getTasks(
         pageNumber,
         PAGE_SIZE,

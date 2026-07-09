@@ -1,27 +1,10 @@
 import { type TaskResponse, TaskStatus } from "../../types/task";
-//import { TaskStatus as Status } from "../../types/task";
 interface Props {
   task: TaskResponse;
   onView: (task: TaskResponse) => void;
   onEdit: (task: TaskResponse) => void;
   onDelete: (id: string) => void;
 }
-
-// function getStatusText(status: TaskStatus) {
-//   switch (status) {
-//     case Status.Pending:
-//       return "Pending";
-
-//     case Status.InProgress:
-//       return "In Progress";
-
-//     case Status.Completed:
-//       return "Completed";
-
-//     default:
-//       return "Unknown";
-//   }
-// }
 
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-GB", {
@@ -80,9 +63,6 @@ export default function TaskCard({ task, onView, onEdit, onDelete }: Props) {
           </p>
         </div>
 
-        {/* <span className="rounded bg-blue-100 px-3 py-1 text-sm">
-          {getStatusBadge(task.status)}
-        </span> */}
         {getStatusBadge(task.status)}
       </div>
 

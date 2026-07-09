@@ -8,9 +8,6 @@ export async function getSignalRConnection(token: string) {
   }
 
   connection = new signalR.HubConnectionBuilder()
-    // .withUrl("http://localhost:5104/hubs/tasks", {
-    //   accessTokenFactory: () => token,
-    // })
     .withUrl(import.meta.env.VITE_SIGNALR_URL, {
       accessTokenFactory: () => token,
     })
